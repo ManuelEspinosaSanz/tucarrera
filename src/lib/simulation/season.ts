@@ -96,18 +96,25 @@ function rollTitle(rng: Rng, club: Club, rendimiento: number): string | null {
 }
 
 const WORLD_CUP_CYCLE = 4;
+/** A token call-up isn't a real shot at the trophy — you need to have actually been
+ * a fixture in the squad that cycle, not just made an appearance. rollSeleccion caps
+ * at 8 per season, so this means "at least half the caps a nailed-on starter gets". */
+const MIN_CAPS_FOR_CONTENTION = 4;
 
 /**
- * A World Cup comes around every 4 seasons — you only get a shot at it if you're
- * actually being called up that year. Deliberately the rarest, highest-value title
- * in the game: even an elite player wins maybe one or two in a full career.
+ * A World Cup comes around every 4 seasons. Being called up gets you nowhere near a
+ * guarantee — it takes real involvement that specific cycle (MIN_CAPS_FOR_CONTENTION)
+ * on top of elite quality, and even then the odds stay real-tournament long: even the
+ * best, most-involved player in the game tops out at a 15% chance per cycle.
  */
 function rollWorldCup(rng: Rng, player: Player, seasonNumber: number, partidosSeleccion: number): string | null {
   if (seasonNumber % WORLD_CUP_CYCLE !== 0) return null;
-  if (partidosSeleccion === 0) return null;
+  if (partidosSeleccion < MIN_CAPS_FOR_CONTENTION) return null;
 
   const { media, popularidad } = player.atributos;
-  const chance = clamp((media + popularidad - 140) / 500, 0, 0.15);
+  const qualityFactor = clamp((media + popularidad - 140) / 500, 0, 0.15);
+  const involvementFactor = clamp(partidosSeleccion / 8, 0, 1);
+  const chance = qualityFactor * involvementFactor;
   return rng.chance(chance) ? "Mundial" : null;
 }
 
