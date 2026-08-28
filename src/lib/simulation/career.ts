@@ -54,5 +54,5 @@ export function simulateCareer(options: CareerOptions): CareerResult {
     player = { ...player, clubActualId: club.id };
   }
 
-  return finalizeCareer(player.id, options.seed, player.nombre, player.posicion, temporadas);
+  return finalizeCareer(player.id, options.seed, player.nombre, player.dorsal, player.posicion, temporadas);
 }

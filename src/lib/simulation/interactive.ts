@@ -37,6 +37,7 @@ export interface CareerOptions {
   nombre: string;
   posicion: Position;
   arquetipo: Archetype;
+  dorsal?: number;
   clubInicialId?: string;
 }
 
@@ -76,6 +77,7 @@ export function startCareerProgress(options: CareerOptions): CareerProgress {
     nombre: options.nombre,
     posicion: options.posicion,
     arquetipo: options.arquetipo,
+    dorsal: options.dorsal,
   });
   const club = options.clubInicialId ? findClub(options.clubInicialId) : pickStarterClub(rng);
 
@@ -128,7 +130,14 @@ export function resolveEvent(
   const retires = shouldRetire(progress.rng, player) || progress.seasonNumber >= MAX_SEASONS;
 
   if (retires) {
-    const result = finalizeCareer(player.id, progress.options.seed, player.nombre, player.posicion, temporadas);
+    const result = finalizeCareer(
+      player.id,
+      progress.options.seed,
+      player.nombre,
+      player.dorsal,
+      player.posicion,
+      temporadas
+    );
     return {
       progress: { ...nextProgress, finished: true, result },
       finished: true,

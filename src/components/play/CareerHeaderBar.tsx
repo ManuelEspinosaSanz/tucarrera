@@ -20,9 +20,12 @@ export function CareerHeaderBar({ player, club, cumulativeStats }: CareerHeaderB
   const value = estimateMarketValue(player.atributos);
 
   return (
-    <div className="animate-card-in mx-auto mb-3 w-full max-w-lg rounded-xl border border-zinc-800 bg-zinc-900/40 px-4 py-3">
+    <div className="animate-card-in mx-auto mb-3 w-full max-w-lg rounded-xl border border-zinc-800 bg-gradient-to-r from-zinc-900/70 to-zinc-900/30 px-4 py-3">
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
+          <span className="font-display flex h-8 w-8 flex-none items-center justify-center rounded-md bg-zinc-800 text-base text-zinc-300">
+            {player.dorsal}
+          </span>
           <ClubCrest club={club} size={30} />
           <div className="min-w-0">
             <div className="truncate text-sm font-semibold text-zinc-100">{player.nombre}</div>
@@ -32,12 +35,12 @@ export function CareerHeaderBar({ player, club, cumulativeStats }: CareerHeaderB
           </div>
         </div>
 
-        <div className="flex flex-none items-center gap-4">
-          <div className="text-center">
+        <div className="flex flex-none items-center gap-3">
+          <div className="rounded-lg border border-emerald-800/60 bg-emerald-950/40 px-2.5 py-1 text-center">
             <div className="font-mono text-lg leading-none font-bold text-emerald-400">
               {Math.round(player.atributos.media)}
             </div>
-            <div className="mt-1 font-mono text-[0.55rem] tracking-wide text-zinc-500 uppercase">Nivel</div>
+            <div className="mt-0.5 font-mono text-[0.5rem] tracking-wide text-emerald-600 uppercase">Nivel</div>
           </div>
           <div className="text-center">
             <div className="font-mono text-sm leading-none font-bold text-amber-400">

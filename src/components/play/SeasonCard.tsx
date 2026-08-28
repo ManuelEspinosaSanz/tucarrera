@@ -15,56 +15,67 @@ export function SeasonCard({ stats, onContinue, continueLabel = "Continuar" }: S
   const lesion = stats.lesiones[0];
 
   return (
-    <div className="animate-card-in mx-auto w-full max-w-lg rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6">
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-xs tracking-wide text-emerald-500 uppercase">
-          Temporada {stats.numeroTemporada}
-        </span>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-zinc-400">{stats.edad} años · {club.nombre}</span>
-          <ClubCrest club={club} size={26} />
+    <div className="animate-card-in mx-auto w-full max-w-lg overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-b from-zinc-900/80 to-zinc-900/40 shadow-xl shadow-black/20">
+      <div className="h-1 bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600/40" />
+      <div className="p-6">
+        <div className="flex items-center justify-between">
+          <span className="font-display text-2xl tracking-wide text-emerald-400">
+            Temporada {stats.numeroTemporada}
+          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-zinc-400">
+              {stats.edad} años · {club.nombre}
+            </span>
+            <ClubCrest club={club} size={26} />
+          </div>
         </div>
-      </div>
 
-      <div className="mt-5 grid grid-cols-4 gap-3 text-center">
-        <Stat label="Partidos" value={stats.partidosJugados} />
-        <Stat label="Goles" value={stats.goles} />
-        <Stat label="Asist." value={stats.asistencias} />
-        <Stat label="Rating" value={stats.mediaRendimiento.toFixed(1)} />
-      </div>
-
-      {(stats.titulos.length > 0 ||
-        stats.premiosIndividuales.length > 0 ||
-        stats.partidosSeleccion > 0 ||
-        lesion) && (
-        <div className="mt-5 flex flex-wrap items-center gap-2">
-          {stats.titulos.map((titulo, i) => (
-            <TrophyBadge key={`t-${i}`} variant={titulo === "Liga" || titulo === "Copa" || titulo === "Champions" ? titulo : "Copa"} label={titulo} />
-          ))}
-          {stats.premiosIndividuales.map((premio, i) => (
-            <TrophyBadge key={`p-${i}`} variant="premio" label={premio} />
-          ))}
-          {stats.partidosSeleccion > 0 && (
-            <Badge tone="emerald">{stats.partidosSeleccion} con la selección</Badge>
-          )}
-          {lesion && <Badge tone="red">Lesión {lesion.severidad}</Badge>}
+        <div className="mt-5 grid grid-cols-4 gap-3 text-center">
+          <Stat label="Partidos" value={stats.partidosJugados} />
+          <Stat label="Goles" value={stats.goles} />
+          <Stat label="Asist." value={stats.asistencias} />
+          <Stat label="Rating" value={stats.mediaRendimiento.toFixed(1)} accent />
         </div>
-      )}
 
-      <button
-        onClick={onContinue}
-        className="mt-6 w-full rounded-full bg-zinc-100 px-6 py-2.5 text-sm font-semibold text-zinc-950 transition-colors hover:bg-white"
-      >
-        {continueLabel}
-      </button>
+        {(stats.titulos.length > 0 ||
+          stats.premiosIndividuales.length > 0 ||
+          stats.partidosSeleccion > 0 ||
+          lesion) && (
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            {stats.titulos.map((titulo, i) => (
+              <TrophyBadge
+                key={`t-${i}`}
+                variant={titulo === "Liga" || titulo === "Copa" || titulo === "Champions" ? titulo : "Copa"}
+                label={titulo}
+              />
+            ))}
+            {stats.premiosIndividuales.map((premio, i) => (
+              <TrophyBadge key={`p-${i}`} variant="premio" label={premio} />
+            ))}
+            {stats.partidosSeleccion > 0 && (
+              <Badge tone="emerald">{stats.partidosSeleccion} con la selección</Badge>
+            )}
+            {lesion && <Badge tone="red">Lesión {lesion.severidad}</Badge>}
+          </div>
+        )}
+
+        <button
+          onClick={onContinue}
+          className="mt-6 w-full rounded-full bg-zinc-100 px-6 py-2.5 text-sm font-semibold text-zinc-950 transition-all hover:scale-[1.01] hover:bg-white"
+        >
+          {continueLabel}
+        </button>
+      </div>
     </div>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string | number }) {
+function Stat({ label, value, accent }: { label: string; value: string | number; accent?: boolean }) {
   return (
     <div>
-      <div className="text-xl font-bold tabular-nums text-zinc-100">{value}</div>
+      <div className={`text-xl font-bold tabular-nums ${accent ? "text-emerald-400" : "text-zinc-100"}`}>
+        {value}
+      </div>
       <div className="mt-0.5 font-mono text-[0.65rem] tracking-wide text-zinc-500 uppercase">{label}</div>
     </div>
   );
@@ -85,9 +96,5 @@ function Badge({ children, tone }: { children: ReactNode; tone: "emerald" | "red
     red: "bg-red-950/50 text-red-400 border-red-900",
   }[tone];
 
-  return (
-    <span className={`rounded-full border px-2.5 py-1 text-xs font-medium ${toneClasses}`}>
-      {children}
-    </span>
-  );
+  return <span className={`rounded-full border px-2.5 py-1 text-xs font-medium ${toneClasses}`}>{children}</span>;
 }

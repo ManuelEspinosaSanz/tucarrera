@@ -8,6 +8,8 @@ export interface CreatePlayerParams {
   nombre: string;
   posicion: Position;
   arquetipo: Archetype;
+  /** Squad number, 1-99. Cosmetic only. Defaults to 10 when omitted (batch/test callers). */
+  dorsal?: number;
 }
 
 const STARTING_AGE = 18;
@@ -37,6 +39,7 @@ export function createPlayer(rng: Rng, params: CreatePlayerParams): Player {
     nombre: params.nombre,
     posicion: params.posicion,
     arquetipo: params.arquetipo,
+    dorsal: params.dorsal ?? 10,
     atributos: applyArchetypeModifiers(base, params.arquetipo),
     clubActualId: null,
   };

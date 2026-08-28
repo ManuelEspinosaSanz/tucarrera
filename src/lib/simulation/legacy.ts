@@ -57,6 +57,7 @@ export function legacyTier(score: number): LegacyTier {
 function buildSummary(
   posicion: Position,
   nombreJugador: string,
+  dorsal: number,
   temporadas: SeasonStats[]
 ): CareerSummary {
   const clubesTotales = new Set(temporadas.map((s) => s.clubId)).size;
@@ -84,6 +85,7 @@ function buildSummary(
 
   return {
     nombreJugador,
+    dorsal,
     posicion,
     temporadasJugadas: temporadas.length,
     edadRetiro: lastSeason.edad + 1,
@@ -103,12 +105,13 @@ export function finalizeCareer(
   jugadorId: string,
   seed: number,
   nombreJugador: string,
+  dorsal: number,
   posicion: Position,
   temporadas: SeasonStats[]
 ): CareerResult {
   let puntuacionFinal = temporadas.reduce((sum, season) => sum + scoreSeason(season), 0);
 
-  const resumen = buildSummary(posicion, nombreJugador, temporadas);
+  const resumen = buildSummary(posicion, nombreJugador, dorsal, temporadas);
   if (resumen.edadRetiro < EARLY_RETIREMENT_AGE) {
     puntuacionFinal -= 1000;
   }

@@ -12,6 +12,18 @@ export const POSITION_LABELS: Record<Position, string> = {
   delantero_centro: "Delantero centro",
 };
 
+export const POSITION_CODES: Record<Position, string> = {
+  portero: "POR",
+  defensa_central: "DFC",
+  lateral_derecho: "LD",
+  lateral_izquierdo: "LI",
+  mediocentro: "MC",
+  mediocentro_ofensivo: "MCO",
+  extremo_derecho: "ED",
+  extremo_izquierdo: "EI",
+  delantero_centro: "DC",
+};
+
 export const ARCHETYPE_LABELS: Record<Archetype, string> = {
   trabajador: "El trabajador",
   prodigio: "El prodigio",

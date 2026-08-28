@@ -9,6 +9,7 @@ import type { CareerDecision } from "../simulation/types";
 export interface CareerSharePayload {
   seed: number;
   nombre: string;
+  dorsal: number;
   posicion: CareerOptions["posicion"];
   arquetipo: CareerOptions["arquetipo"];
   decisions: CareerDecision[];
@@ -40,6 +41,7 @@ export function decodeCareerShare(id: string): CareerSharePayload | null {
     if (
       typeof parsed.seed !== "number" ||
       typeof parsed.nombre !== "string" ||
+      typeof parsed.dorsal !== "number" ||
       typeof parsed.posicion !== "string" ||
       typeof parsed.arquetipo !== "string" ||
       !Array.isArray(parsed.decisions)

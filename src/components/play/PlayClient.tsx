@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { track } from "@/lib/analytics/events";
 import { encodeCareerShare } from "@/lib/sharing/encode";
 import {
@@ -18,6 +18,7 @@ import { DecisionCard } from "./DecisionCard";
 import { FinalResultCard } from "./FinalResultCard";
 import { PlayerSetupForm, type PlayerSetupValues } from "./PlayerSetupForm";
 import { SeasonCard } from "./SeasonCard";
+import { SeasonHistory } from "./SeasonHistory";
 import { SeasonProgress } from "./SeasonProgress";
 import { TransferChoiceCard } from "./TransferChoiceCard";
 
@@ -43,6 +44,16 @@ function sumStats(temporadas: SeasonStats[], extra?: SeasonStats): CumulativeSta
   );
 }
 
+/** Fixed HUD/history/progress up top, the active card fills (and, if needed, scrolls) the rest. */
+function PlayLayout({ top, card }: { top: ReactNode; card: ReactNode }) {
+  return (
+    <div className="flex h-full flex-col">
+      <div className="flex-none">{top}</div>
+      <div className="min-h-0 flex-1 overflow-y-auto py-1">{card}</div>
+    </div>
+  );
+}
+
 export function PlayClient() {
   const [phase, setPhase] = useState<Phase>({ type: "setup" });
   const [copied, setCopied] = useState(false);
@@ -63,6 +74,7 @@ export function PlayClient() {
       const shareId = encodeCareerShare({
         seed: progress.options.seed,
         nombre: progress.options.nombre,
+        dorsal: progress.options.dorsal ?? 10,
         posicion: progress.options.posicion,
         arquetipo: progress.options.arquetipo,
         decisions: progress.decisions,
@@ -100,81 +112,106 @@ export function PlayClient() {
   }
 
   if (phase.type === "setup") {
-    return <PlayerSetupForm onSubmit={handleSetup} />;
+    return (
+      <div className="h-full overflow-y-auto">
+        <PlayerSetupForm onSubmit={handleSetup} />
+      </div>
+    );
   }
 
   if (phase.type === "stats") {
     const { progress, stats, event } = phase;
     return (
-      <>
-        <CareerHeaderBar
-          player={progress.player}
-          club={progress.club}
-          cumulativeStats={sumStats(progress.temporadas, stats)}
-        />
-        <SeasonProgress seasonNumber={stats.numeroTemporada} />
-        <SeasonCard
-          stats={stats}
-          continueLabel={event ? "Ver decisión" : "Continuar"}
-          onContinue={() =>
-            event
-              ? setPhase({ type: "decision", progress, stats, event })
-              : handleEventChoice(progress, stats, null, null)
-          }
-        />
-      </>
+      <PlayLayout
+        top={
+          <>
+            <CareerHeaderBar
+              player={progress.player}
+              club={progress.club}
+              cumulativeStats={sumStats(progress.temporadas, stats)}
+            />
+            <SeasonHistory temporadas={progress.temporadas} />
+            <SeasonProgress seasonNumber={stats.numeroTemporada} />
+          </>
+        }
+        card={
+          <SeasonCard
+            stats={stats}
+            continueLabel={event ? "Ver decisión" : "Continuar"}
+            onContinue={() =>
+              event
+                ? setPhase({ type: "decision", progress, stats, event })
+                : handleEventChoice(progress, stats, null, null)
+            }
+          />
+        }
+      />
     );
   }
 
   if (phase.type === "decision") {
     const { progress, stats, event } = phase;
     return (
-      <>
-        <CareerHeaderBar
-          player={progress.player}
-          club={progress.club}
-          cumulativeStats={sumStats(progress.temporadas, stats)}
-        />
-        <SeasonProgress seasonNumber={stats.numeroTemporada} />
-        <DecisionCard event={event} onChoose={(choiceId) => handleEventChoice(progress, stats, event, choiceId)} />
-      </>
+      <PlayLayout
+        top={
+          <>
+            <CareerHeaderBar
+              player={progress.player}
+              club={progress.club}
+              cumulativeStats={sumStats(progress.temporadas, stats)}
+            />
+            <SeasonHistory temporadas={progress.temporadas} />
+            <SeasonProgress seasonNumber={stats.numeroTemporada} />
+          </>
+        }
+        card={<DecisionCard event={event} onChoose={(choiceId) => handleEventChoice(progress, stats, event, choiceId)} />}
+      />
     );
   }
 
   if (phase.type === "transfer") {
     const { progress, offers } = phase;
     return (
-      <>
-        <CareerHeaderBar player={progress.player} club={progress.club} cumulativeStats={sumStats(progress.temporadas)} />
-        <SeasonProgress seasonNumber={progress.seasonNumber} />
-        <TransferChoiceCard
-          currentClub={progress.club}
-          offers={offers}
-          onChoose={(club) => handleTransferChoice(progress, club)}
-        />
-      </>
+      <PlayLayout
+        top={
+          <>
+            <CareerHeaderBar player={progress.player} club={progress.club} cumulativeStats={sumStats(progress.temporadas)} />
+            <SeasonHistory temporadas={progress.temporadas} />
+            <SeasonProgress seasonNumber={progress.seasonNumber} />
+          </>
+        }
+        card={
+          <TransferChoiceCard
+            currentClub={progress.club}
+            offers={offers}
+            onChoose={(club) => handleTransferChoice(progress, club)}
+          />
+        }
+      />
     );
   }
 
   const shareUrl = typeof window !== "undefined" ? `${window.location.origin}/carrera/${phase.shareId}` : "";
 
   return (
-    <FinalResultCard
-      result={phase.result}
-      primaryAction={{
-        label: copied ? "¡Enlace copiado!" : "Compartir carrera",
-        onClick: async () => {
-          track({ name: "share_clicked", props: { careerId: phase.shareId } });
-          try {
-            await navigator.clipboard.writeText(shareUrl);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 2000);
-          } catch {
-            window.prompt("Copia tu enlace:", shareUrl);
-          }
-        },
-      }}
-      secondaryAction={{ label: "Jugar otra vez", onClick: () => setPhase({ type: "setup" }) }}
-    />
+    <div className="h-full overflow-y-auto">
+      <FinalResultCard
+        result={phase.result}
+        primaryAction={{
+          label: copied ? "¡Enlace copiado!" : "Compartir carrera",
+          onClick: async () => {
+            track({ name: "share_clicked", props: { careerId: phase.shareId } });
+            try {
+              await navigator.clipboard.writeText(shareUrl);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2000);
+            } catch {
+              window.prompt("Copia tu enlace:", shareUrl);
+            }
+          },
+        }}
+        secondaryAction={{ label: "Jugar otra vez", onClick: () => setPhase({ type: "setup" }) }}
+      />
+    </div>
   );
 }

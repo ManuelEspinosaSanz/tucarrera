@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FinalResultCard } from "@/components/play/FinalResultCard";
 import { decodeCareerShare } from "@/lib/sharing/encode";
@@ -12,7 +13,13 @@ async function loadResult(id: string) {
   const payload = decodeCareerShare(id);
   if (!payload) return null;
   return replayCareer(
-    { seed: payload.seed, nombre: payload.nombre, posicion: payload.posicion, arquetipo: payload.arquetipo },
+    {
+      seed: payload.seed,
+      nombre: payload.nombre,
+      dorsal: payload.dorsal,
+      posicion: payload.posicion,
+      arquetipo: payload.arquetipo,
+    },
     payload.decisions
   );
 }
@@ -36,7 +43,10 @@ export default async function CareraPage({ params }: CareraPageProps) {
   return (
     <div className="flex flex-1 flex-col px-6 py-12">
       <div className="mx-auto w-full max-w-lg text-center">
-        <p className="font-mono text-xs tracking-[0.2em] text-emerald-500 uppercase">Resultado de carrera</p>
+        <Link href="/" className="font-display inline-block text-xl tracking-wide text-zinc-400 transition-colors hover:text-emerald-400">
+          Tu Carrera
+        </Link>
+        <p className="mt-3 font-mono text-xs tracking-[0.2em] text-emerald-500 uppercase">Resultado de carrera</p>
       </div>
       <div className="mt-8 flex-1">
         <FinalResultCard

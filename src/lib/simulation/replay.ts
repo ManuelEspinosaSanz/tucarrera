@@ -27,6 +27,7 @@ export function replayCareer(options: CareerOptions, decisions: readonly CareerD
     nombre: options.nombre,
     posicion: options.posicion,
     arquetipo: options.arquetipo,
+    dorsal: options.dorsal,
   });
   let club = options.clubInicialId ? findClub(options.clubInicialId) : pickStarterClub(rng);
   player = { ...player, clubActualId: club.id };
@@ -63,5 +64,5 @@ export function replayCareer(options: CareerOptions, decisions: readonly CareerD
     }
   }
 
-  return finalizeCareer(player.id, options.seed, player.nombre, player.posicion, temporadas);
+  return finalizeCareer(player.id, options.seed, player.nombre, player.dorsal, player.posicion, temporadas);
 }

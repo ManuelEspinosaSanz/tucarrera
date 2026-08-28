@@ -48,6 +48,8 @@ export interface Player {
   nombre: string;
   posicion: Position;
   arquetipo: Archetype;
+  /** Squad number, 1-99. Cosmetic — plays no role in the simulation. */
+  dorsal: number;
   atributos: PlayerAttributes;
   clubActualId: string | null;
 }
@@ -139,6 +141,7 @@ export type CareerDecision =
 /** Aggregate totals for the end-of-career screen — computed once so the UI never re-derives them. */
 export interface CareerSummary {
   nombreJugador: string;
+  dorsal: number;
   posicion: Position;
   temporadasJugadas: number;
   edadRetiro: number;

@@ -28,9 +28,9 @@ const LEGACY_TONE: Record<CareerResult["legado"], { text: string; ring: string; 
 function ActionButton({ action, variant }: { action: ResultAction; variant: "primary" | "secondary" }) {
   const classes =
     variant === "primary"
-      ? "bg-emerald-600 text-white hover:bg-emerald-500"
+      ? "bg-emerald-600 text-white hover:bg-emerald-500 hover:scale-[1.02]"
       : "border border-zinc-700 text-zinc-200 hover:border-zinc-500";
-  const className = `w-full rounded-full px-6 py-3 text-center text-sm font-semibold transition-colors ${classes}`;
+  const className = `w-full rounded-full px-6 py-3 text-center text-sm font-semibold transition-all ${classes}`;
 
   if (action.href) {
     return (
@@ -58,7 +58,9 @@ export function FinalResultCard({ result, primaryAction, secondaryAction }: Fina
         <p className="mt-3 font-mono text-xs tracking-[0.2em] text-zinc-500 uppercase">
           {resumen.temporadasJugadas} temporadas · retirado a los {resumen.edadRetiro}
         </p>
-        <h2 className="mt-2 text-3xl font-bold text-balance text-zinc-50">{resumen.nombreJugador}</h2>
+        <h2 className="font-display mt-2 text-4xl tracking-wide text-balance text-zinc-50">
+          <span className="text-zinc-500">#{resumen.dorsal}</span> {resumen.nombreJugador}
+        </h2>
         <p className="mt-1 text-sm text-zinc-400">
           {POSITION_LABELS[resumen.posicion]} · {lastClub.nombre}
         </p>

@@ -26,7 +26,13 @@ export default async function OpengraphImage({ params }: { params: Promise<{ id:
   const payload = decodeCareerShare(id);
   const result = payload
     ? replayCareer(
-        { seed: payload.seed, nombre: payload.nombre, posicion: payload.posicion, arquetipo: payload.arquetipo },
+        {
+          seed: payload.seed,
+          nombre: payload.nombre,
+          dorsal: payload.dorsal,
+          posicion: payload.posicion,
+          arquetipo: payload.arquetipo,
+        },
         payload.decisions
       )
     : null;
