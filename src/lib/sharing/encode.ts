@@ -1,4 +1,5 @@
 import type { CareerOptions } from "../simulation/interactive";
+import type { CareerDecision } from "../simulation/types";
 
 /**
  * Encodes everything needed to reconstruct a finished career into a URL-safe string:
@@ -10,7 +11,7 @@ export interface CareerSharePayload {
   nombre: string;
   posicion: CareerOptions["posicion"];
   arquetipo: CareerOptions["arquetipo"];
-  decisions: string[];
+  decisions: CareerDecision[];
 }
 
 function toBase64Url(input: string): string {

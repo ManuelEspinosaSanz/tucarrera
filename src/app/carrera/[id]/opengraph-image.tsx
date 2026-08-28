@@ -1,4 +1,6 @@
 import { ImageResponse } from "next/og";
+import { findClub } from "@/lib/simulation/clubs";
+import { crestColors, crestInitials } from "@/lib/simulation/crest";
 import { LEGACY_LABELS, POSITION_LABELS } from "@/lib/simulation/labels";
 import { decodeCareerShare } from "@/lib/sharing/encode";
 import { replayCareer } from "@/lib/simulation/replay";
@@ -51,8 +53,10 @@ export default async function OpengraphImage({ params }: { params: Promise<{ id:
     );
   }
 
-  const { resumen } = result;
+  const { resumen, temporadas } = result;
   const legacyColor = LEGACY_COLOR[result.legado];
+  const lastClub = findClub(temporadas[temporadas.length - 1].clubId);
+  const crest = crestColors(lastClub.id);
 
   return new ImageResponse(
     (
@@ -68,8 +72,27 @@ export default async function OpengraphImage({ params }: { params: Promise<{ id:
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", fontSize: 26, letterSpacing: 4, color: "#34d399", textTransform: "uppercase" }}>
-          Tu Carrera
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div style={{ display: "flex", fontSize: 26, letterSpacing: 4, color: "#34d399", textTransform: "uppercase" }}>
+            Tu Carrera
+          </div>
+          <div
+            style={{
+              display: "flex",
+              width: 64,
+              height: 64,
+              borderRadius: 16,
+              background: crest.primary,
+              border: `3px solid ${crest.secondary}`,
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 24,
+              fontWeight: 700,
+              color: "white",
+            }}
+          >
+            {crestInitials(lastClub.nombre)}
+          </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", marginTop: 28 }}>
@@ -77,7 +100,7 @@ export default async function OpengraphImage({ params }: { params: Promise<{ id:
             {resumen.nombreJugador}
           </div>
           <div style={{ display: "flex", fontSize: 30, color: "#a1a1aa", marginTop: 8 }}>
-            {POSITION_LABELS[resumen.posicion]} · {resumen.temporadasJugadas} temporadas
+            {POSITION_LABELS[resumen.posicion]} · {lastClub.nombre}
           </div>
         </div>
 

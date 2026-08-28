@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { findClub } from "@/lib/simulation/clubs";
 import type { SeasonStats } from "@/lib/simulation/types";
+import { ClubCrest } from "./ClubCrest";
+import { TrophyIcon } from "./TrophyIcon";
 
 interface SeasonCardProps {
   stats: SeasonStats;
@@ -13,12 +15,15 @@ export function SeasonCard({ stats, onContinue, continueLabel = "Continuar" }: S
   const lesion = stats.lesiones[0];
 
   return (
-    <div className="mx-auto w-full max-w-lg rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6">
-      <div className="flex items-baseline justify-between">
+    <div className="animate-card-in mx-auto w-full max-w-lg rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6">
+      <div className="flex items-center justify-between">
         <span className="font-mono text-xs tracking-wide text-emerald-500 uppercase">
           Temporada {stats.numeroTemporada}
         </span>
-        <span className="text-sm text-zinc-500">{stats.edad} años · {club.nombre}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-zinc-400">{stats.edad} años · {club.nombre}</span>
+          <ClubCrest club={club} size={26} />
+        </div>
       </div>
 
       <div className="mt-5 grid grid-cols-4 gap-3 text-center">
@@ -32,16 +37,12 @@ export function SeasonCard({ stats, onContinue, continueLabel = "Continuar" }: S
         stats.premiosIndividuales.length > 0 ||
         stats.partidosSeleccion > 0 ||
         lesion) && (
-        <div className="mt-5 flex flex-wrap gap-2">
+        <div className="mt-5 flex flex-wrap items-center gap-2">
           {stats.titulos.map((titulo, i) => (
-            <Badge key={`t-${i}`} tone="gold">
-              🏆 {titulo}
-            </Badge>
+            <TrophyBadge key={`t-${i}`} variant={titulo === "Liga" || titulo === "Copa" || titulo === "Champions" ? titulo : "Copa"} label={titulo} />
           ))}
           {stats.premiosIndividuales.map((premio, i) => (
-            <Badge key={`p-${i}`} tone="gold">
-              ⭐ {premio}
-            </Badge>
+            <TrophyBadge key={`p-${i}`} variant="premio" label={premio} />
           ))}
           {stats.partidosSeleccion > 0 && (
             <Badge tone="emerald">{stats.partidosSeleccion} con la selección</Badge>
@@ -69,9 +70,17 @@ function Stat({ label, value }: { label: string; value: string | number }) {
   );
 }
 
-function Badge({ children, tone }: { children: ReactNode; tone: "gold" | "emerald" | "red" }) {
+function TrophyBadge({ variant, label }: { variant: Parameters<typeof TrophyIcon>[0]["variant"]; label: string }) {
+  return (
+    <span className="flex items-center gap-1.5 rounded-full border border-amber-900 bg-amber-950/40 py-1 pr-3 pl-1.5 text-xs font-medium text-amber-300">
+      <TrophyIcon variant={variant} size={18} />
+      {label}
+    </span>
+  );
+}
+
+function Badge({ children, tone }: { children: ReactNode; tone: "emerald" | "red" }) {
   const toneClasses = {
-    gold: "bg-amber-950/50 text-amber-400 border-amber-900",
     emerald: "bg-emerald-950/50 text-emerald-400 border-emerald-900",
     red: "bg-red-950/50 text-red-400 border-red-900",
   }[tone];

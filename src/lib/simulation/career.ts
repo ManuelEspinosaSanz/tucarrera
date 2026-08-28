@@ -3,7 +3,7 @@ import { pickStarterClub, findClub } from "./clubs";
 import { applyEventChoice, chooseEventOption, pickEventForSeason } from "./events";
 import { finalizeCareer } from "./legacy";
 import { createPlayer } from "./player";
-import { maybeTransfer, shouldRetire } from "./transfers";
+import { autoChooseTransfer, getTransferOffers, shouldRetire } from "./transfers";
 import { simulateSeasonPerformance } from "./season";
 import type { Archetype, CareerResult, Position, SeasonStats } from "./types";
 
@@ -49,8 +49,8 @@ export function simulateCareer(options: CareerOptions): CareerResult {
 
     if (shouldRetire(rng, player)) break;
 
-    const nextClub = maybeTransfer(rng, player, club, outcome.stats.mediaRendimiento);
-    club = nextClub;
+    const offers = getTransferOffers(rng, player, club, outcome.stats.mediaRendimiento);
+    club = autoChooseTransfer(rng, player, club, offers);
     player = { ...player, clubActualId: club.id };
   }
 

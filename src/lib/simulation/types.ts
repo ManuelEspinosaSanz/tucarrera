@@ -127,6 +127,15 @@ export type LegacyTier =
   | "leyenda"
   | "inmortal";
 
+/**
+ * A single human decision made during a career, in the order it happened. This is
+ * exactly what a `/carrera/[id]` share link encodes (alongside the seed) so the
+ * career can be replayed deterministically without a database — see replay.ts.
+ */
+export type CareerDecision =
+  | { type: "event"; choiceId: string }
+  | { type: "transfer"; clubId: string | null }; // null = stayed at the current club
+
 /** Aggregate totals for the end-of-career screen — computed once so the UI never re-derives them. */
 export interface CareerSummary {
   nombreJugador: string;

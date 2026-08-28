@@ -3,16 +3,19 @@ import type { Rng } from "./random";
 import type { Club, Player } from "./types";
 import { clamp } from "./utils";
 
+const MAX_OFFERS = 3;
+
 /**
- * Decides whether `player` moves clubs at the end of a season. Returns the club to
- * play for next season (same as `currentClub` if nothing changes).
+ * Generates this season's transfer offers (0-3 clubs), if any arrive at all. Offer
+ * generation is fully rng-driven and never depends on what the player will choose —
+ * that's what keeps interactive play and replay.ts in sync (see interactive.ts).
  */
-export function maybeTransfer(
+export function getTransferOffers(
   rng: Rng,
   player: Player,
   currentClub: Club,
   seasonMediaRendimiento: number
-): Club {
+): Club[] {
   const { media, popularidad, ambicion, lealtad } = player.atributos;
 
   const upgradePressure =
@@ -23,28 +26,50 @@ export function maybeTransfer(
     lealtad / 15;
 
   const offerChance = clamp(0.15 + upgradePressure / 100, 0.05, 0.85);
-  if (!rng.chance(offerChance)) return currentClub;
+  if (!rng.chance(offerChance)) return [];
 
   const reach = 10 + popularidad / 5;
   const candidates = CLUBS.filter(
     (club) => club.id !== currentClub.id && Math.abs(club.nivel - media) <= reach
   );
-  if (candidates.length === 0) return currentClub;
+  if (candidates.length === 0) return [];
 
-  const weighted = candidates.map((club) => ({
-    value: club,
-    weight: Math.max(1, 30 - Math.abs(club.nivel - (media + 5))) + club.reputacion / 10,
-  }));
-  const proposedClub = rng.weighted(weighted);
+  const offerCount = rng.int(1, Math.min(MAX_OFFERS, candidates.length));
+  const pool = [...candidates];
+  const offers: Club[] = [];
 
-  const isUpgrade = proposedClub.nivel > currentClub.nivel;
+  for (let i = 0; i < offerCount; i++) {
+    const weighted = pool.map((club) => ({
+      value: club,
+      weight: Math.max(1, 30 - Math.abs(club.nivel - (media + 5))) + club.reputacion / 10,
+    }));
+    const picked = rng.weighted(weighted);
+    offers.push(picked);
+    pool.splice(
+      pool.findIndex((c) => c.id === picked.id),
+      1
+    );
+  }
+
+  return offers;
+}
+
+/**
+ * Autonomous accept/reject/stay policy used only by the batch balance harness
+ * (career.ts) — a human picks for real in interactive play (see interactive.ts).
+ */
+export function autoChooseTransfer(rng: Rng, player: Player, currentClub: Club, offers: Club[]): Club {
+  if (offers.length === 0) return currentClub;
+
+  const best = offers.reduce((a, b) => (b.nivel > a.nivel ? b : a));
+  const isUpgrade = best.nivel > currentClub.nivel;
   const acceptChance = clamp(
-    0.3 + (isUpgrade ? ambicion / 120 : -0.15) - lealtad / 150,
+    0.3 + (isUpgrade ? player.atributos.ambicion / 120 : -0.15) - player.atributos.lealtad / 150,
     0.05,
     0.9
   );
 
-  return rng.chance(acceptChance) ? proposedClub : currentClub;
+  return rng.chance(acceptChance) ? best : currentClub;
 }
 
 const FORCED_RETIREMENT_AGE = 40;
