@@ -190,8 +190,13 @@ export function simulateSeasonPerformance(
 
   const premiosIndividuales = rollPremios(rng, player, goles);
 
+  // porteriasACero gives defenders/goalkeepers a route to popularidad comparable to a
+  // striker's goles*0.3 — without it, defensive positions could barely ever reach the
+  // popularidad selección/Mundial eligibility depends on (see season.ts's rollSeleccion).
   const popularidadDelta =
-    Math.round((rendimiento - 50) / 10 + goles * 0.3 + asistencias * 0.15 + club.reputacion / 50) - 1;
+    Math.round(
+      (rendimiento - 50) / 10 + goles * 0.3 + asistencias * 0.15 + porteriasACero * 0.4 + club.reputacion / 50
+    ) - 1;
   const popularidadFinal = clamp(player.atributos.popularidad + popularidadDelta, 0, 100);
 
   const nuevaMedia = evolveMedia(rng, player);

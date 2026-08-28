@@ -5,7 +5,9 @@
  * transfer offer); which seeds actually deliver a Leyenda+Mundial run is genuinely
  * up to the engine's randomness, same as a human replaying the game several times.
  *
- * Usage: npx tsx scripts/find-run.ts
+ * Usage:
+ *   npx tsx scripts/find-run.ts
+ *   npx tsx scripts/find-run.ts --posicion=defensa_central --arquetipo=lider --nombre="Test"
  */
 import {
   playSeason,
@@ -16,17 +18,24 @@ import {
   type CareerOptions,
 } from "../src/lib/simulation/interactive";
 import { encodeCareerShare } from "../src/lib/sharing/encode";
-import type { LegacyTier } from "../src/lib/simulation/types";
+import type { Archetype, LegacyTier, Position } from "../src/lib/simulation/types";
 
-const TARGET_TIERS: LegacyTier[] = ["leyenda", "inmortal"];
-const MAX_SEEDS = 20000;
+function argValue(name: string): string | undefined {
+  const arg = process.argv.find((a) => a.startsWith(`--${name}=`));
+  return arg?.split("=")[1];
+}
+
+const TARGET_TIERS: LegacyTier[] = process.argv.includes("--any-tier")
+  ? ["jugador_local", "profesional", "estrella", "leyenda", "inmortal"]
+  : ["leyenda", "inmortal"];
+const MAX_SEEDS = Number(argValue("max-seeds") ?? 20000);
 const STOP_AFTER_MATCHES = 40; // keep searching a bit past the first hit, then take the best
 
 const baseOptions: Omit<CareerOptions, "seed"> = {
-  nombre: "Manu García",
-  dorsal: 10,
-  posicion: "delantero_centro",
-  arquetipo: "prodigio",
+  nombre: argValue("nombre") ?? "Manu García",
+  dorsal: Number(argValue("dorsal") ?? 10),
+  posicion: (argValue("posicion") ?? "delantero_centro") as Position,
+  arquetipo: (argValue("arquetipo") ?? "prodigio") as Archetype,
 };
 
 function playOnce(seed: number) {
