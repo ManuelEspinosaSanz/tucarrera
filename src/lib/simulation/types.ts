@@ -86,6 +86,8 @@ export interface SeasonStats {
   mediaRendimiento: number;
   lesiones: InjuryRecord[];
   titulos: string[];
+  partidosSeleccion: number;
+  premiosIndividuales: string[];
   popularidadFinal: number;
 }
 
@@ -125,10 +127,28 @@ export type LegacyTier =
   | "leyenda"
   | "inmortal";
 
+/** Aggregate totals for the end-of-career screen — computed once so the UI never re-derives them. */
+export interface CareerSummary {
+  nombreJugador: string;
+  posicion: Position;
+  temporadasJugadas: number;
+  edadRetiro: number;
+  clubesTotales: number;
+  partidosTotales: number;
+  golesTotales: number;
+  asistenciasTotales: number;
+  titulosTotales: number;
+  championsTotales: number;
+  partidosSeleccionTotales: number;
+  premiosTotales: number;
+  lesionesGravesTotales: number;
+}
+
 export interface CareerResult {
   jugadorId: string;
   seed: number;
   temporadas: SeasonStats[];
+  resumen: CareerSummary;
   puntuacionFinal: number;
   legado: LegacyTier;
 }
