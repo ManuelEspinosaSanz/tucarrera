@@ -1,0 +1,134 @@
+/**
+ * Domain model for the career simulation engine.
+ * Pure types — no simulation logic lives here (that starts in Hito 1).
+ */
+
+export type Position =
+  | "portero"
+  | "defensa_central"
+  | "lateral_derecho"
+  | "lateral_izquierdo"
+  | "mediocentro"
+  | "mediocentro_ofensivo"
+  | "extremo_derecho"
+  | "extremo_izquierdo"
+  | "delantero_centro";
+
+export type Archetype =
+  | "trabajador"
+  | "prodigio"
+  | "talento_natural"
+  | "lider"
+  | "mercenario"
+  | "fiel"
+  | "rebelde"
+  | "profesional"
+  | "fiestero"
+  | "obsesionado_con_ganar";
+
+/** Hidden and visible attributes driving every simulation roll. All on a 0-100 scale unless noted. */
+export interface PlayerAttributes {
+  edad: number;
+  media: number;
+  potencial: number;
+  forma: number;
+  moral: number;
+  energia: number;
+  disciplina: number;
+  ambicion: number;
+  popularidad: number;
+  lealtad: number;
+  profesionalidad: number;
+  resistenciaLesiones: number;
+  presion: number;
+}
+
+export interface Player {
+  id: string;
+  nombre: string;
+  posicion: Position;
+  arquetipo: Archetype;
+  atributos: PlayerAttributes;
+  clubActualId: string | null;
+}
+
+export interface Club {
+  id: string;
+  nombre: string;
+  pais: string;
+  liga: string;
+  /** Sporting level, 0-100. Drives match difficulty and teammate quality. */
+  nivel: number;
+  /** Reputation, 0-100. Drives transfer offers and popularity gain. */
+  reputacion: number;
+  /** Relative budget, 0-100 (not a real currency figure). */
+  presupuesto: number;
+}
+
+export type InjurySeverity = "leve" | "moderada" | "grave";
+
+export interface InjuryRecord {
+  tipo: string;
+  partidosPerdidos: number;
+  severidad: InjurySeverity;
+}
+
+export interface SeasonStats {
+  numeroTemporada: number;
+  clubId: string;
+  edad: number;
+  partidosJugados: number;
+  titularidades: number;
+  minutos: number;
+  goles: number;
+  asistencias: number;
+  porteriasACero: number;
+  mediaRendimiento: number;
+  lesiones: InjuryRecord[];
+  titulos: string[];
+  popularidadFinal: number;
+}
+
+export type EventCategory =
+  | "lesion"
+  | "fichaje"
+  | "personal"
+  | "conflicto"
+  | "exito"
+  | "fracaso"
+  | "entrenador"
+  | "companero"
+  | "agente"
+  | "prensa"
+  | "seleccion"
+  | "contrato"
+  | "retirada";
+
+export interface EventChoice {
+  id: string;
+  texto: string;
+  /** Additive/subtractive deltas applied to the player's attributes. */
+  efectos: Partial<PlayerAttributes>;
+}
+
+export interface GameEvent {
+  id: string;
+  categoria: EventCategory;
+  texto: string;
+  opciones: EventChoice[];
+}
+
+export type LegacyTier =
+  | "jugador_local"
+  | "profesional"
+  | "estrella"
+  | "leyenda"
+  | "inmortal";
+
+export interface CareerResult {
+  jugadorId: string;
+  seed: number;
+  temporadas: SeasonStats[];
+  puntuacionFinal: number;
+  legado: LegacyTier;
+}
