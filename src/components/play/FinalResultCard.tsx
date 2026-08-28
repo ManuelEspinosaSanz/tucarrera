@@ -73,9 +73,9 @@ export function FinalResultCard({ result, primaryAction, secondaryAction }: Fina
         <ResultStat label="Clubes" value={resumen.clubesTotales} />
         <ResultStat label="Títulos" value={resumen.titulosTotales} />
         <ResultStat label="Champions" value={resumen.championsTotales} />
+        <ResultStat label="Mundiales" value={resumen.mundialesTotales} highlight={resumen.mundialesTotales > 0} />
         <ResultStat label="Selección" value={resumen.partidosSeleccionTotales} />
         <ResultStat label="Premios" value={resumen.premiosTotales} />
-        <ResultStat label="Lesiones graves" value={resumen.lesionesGravesTotales} />
       </div>
 
       <TrophyShowcase temporadas={temporadas} />
@@ -97,10 +97,12 @@ export function FinalResultCard({ result, primaryAction, secondaryAction }: Fina
   );
 }
 
-function ResultStat({ label, value }: { label: string; value: number }) {
+function ResultStat({ label, value, highlight }: { label: string; value: number; highlight?: boolean }) {
   return (
     <div>
-      <div className="text-lg font-bold tabular-nums text-zinc-100">{value}</div>
+      <div className={`text-lg font-bold tabular-nums ${highlight ? "text-amber-400" : "text-zinc-100"}`}>
+        {value}
+      </div>
       <div className="mt-0.5 font-mono text-[0.6rem] tracking-wide text-zinc-500 uppercase">{label}</div>
     </div>
   );

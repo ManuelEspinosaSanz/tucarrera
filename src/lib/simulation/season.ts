@@ -95,6 +95,22 @@ function rollTitle(rng: Rng, club: Club, rendimiento: number): string | null {
   ]);
 }
 
+const WORLD_CUP_CYCLE = 4;
+
+/**
+ * A World Cup comes around every 4 seasons — you only get a shot at it if you're
+ * actually being called up that year. Deliberately the rarest, highest-value title
+ * in the game: even an elite player wins maybe one or two in a full career.
+ */
+function rollWorldCup(rng: Rng, player: Player, seasonNumber: number, partidosSeleccion: number): string | null {
+  if (seasonNumber % WORLD_CUP_CYCLE !== 0) return null;
+  if (partidosSeleccion === 0) return null;
+
+  const { media, popularidad } = player.atributos;
+  const chance = clamp((media + popularidad - 140) / 500, 0, 0.15);
+  return rng.chance(chance) ? "Mundial" : null;
+}
+
 function rollSeleccion(rng: Rng, player: Player): number {
   const { popularidad, media } = player.atributos;
   const eligibility = popularidad * 0.4 + media * 0.6;
@@ -168,9 +184,10 @@ export function simulateSeasonPerformance(
   const mediaRendimiento = Math.round(clamp(4 + (rendimiento / 100) * 5.5, 3, 9.8) * 10) / 10;
 
   const titulo = rollTitle(rng, club, rendimiento);
-  const titulos = titulo ? [titulo] : [];
-
   const partidosSeleccion = rollSeleccion(rng, player);
+  const mundial = rollWorldCup(rng, player, seasonNumber, partidosSeleccion);
+  const titulos = [...(titulo ? [titulo] : []), ...(mundial ? [mundial] : [])];
+
   const premiosIndividuales = rollPremios(rng, player, goles);
 
   const popularidadDelta =

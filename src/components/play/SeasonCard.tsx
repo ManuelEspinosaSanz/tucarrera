@@ -45,7 +45,11 @@ export function SeasonCard({ stats, onContinue, continueLabel = "Continuar" }: S
             {stats.titulos.map((titulo, i) => (
               <TrophyBadge
                 key={`t-${i}`}
-                variant={titulo === "Liga" || titulo === "Copa" || titulo === "Champions" ? titulo : "Copa"}
+                variant={
+                  titulo === "Liga" || titulo === "Copa" || titulo === "Champions" || titulo === "Mundial"
+                    ? titulo
+                    : "Copa"
+                }
                 label={titulo}
               />
             ))}

@@ -151,6 +151,7 @@ export interface CareerSummary {
   asistenciasTotales: number;
   titulosTotales: number;
   championsTotales: number;
+  mundialesTotales: number;
   partidosSeleccionTotales: number;
   premiosTotales: number;
   lesionesGravesTotales: number;

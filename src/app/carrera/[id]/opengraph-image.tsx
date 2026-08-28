@@ -108,9 +108,30 @@ export default async function OpengraphImage({ params }: { params: Promise<{ id:
           <div style={{ display: "flex", fontSize: 30, color: "#a1a1aa", marginTop: 8 }}>
             {POSITION_LABELS[resumen.posicion]} · {lastClub.nombre}
           </div>
+          {resumen.mundialesTotales > 0 && (
+            <div
+              style={{
+                display: "flex",
+                marginTop: 16,
+                alignSelf: "flex-start",
+                fontSize: 22,
+                fontWeight: 700,
+                color: "#1c1006",
+                background: "#fbbf24",
+                padding: "8px 18px",
+                borderRadius: 999,
+                textTransform: "uppercase",
+                letterSpacing: 1,
+              }}
+            >
+              {resumen.mundialesTotales > 1
+                ? `Campeón del Mundo x${resumen.mundialesTotales}`
+                : "Campeón del Mundo"}
+            </div>
+          )}
         </div>
 
-        <div style={{ display: "flex", marginTop: 56, gap: 56 }}>
+        <div style={{ display: "flex", marginTop: 48, gap: 56 }}>
           <Stat label="Partidos" value={resumen.partidosTotales} />
           <Stat label="Goles" value={resumen.golesTotales} />
           <Stat label="Asistencias" value={resumen.asistenciasTotales} />

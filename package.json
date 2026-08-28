@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "sim:batch": "tsx scripts/simulate-batch.ts",
-    "sim:play": "tsx scripts/play-career.ts"
+    "sim:play": "tsx scripts/play-career.ts",
+    "sim:find": "tsx scripts/find-run.ts"
   },
   "dependencies": {
     "next": "16.3.3",

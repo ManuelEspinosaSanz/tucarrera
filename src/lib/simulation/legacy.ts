@@ -4,6 +4,7 @@ const TITLE_SCORES: Record<string, number> = {
   Liga: 150,
   Copa: 100,
   Champions: 900,
+  Mundial: 1800,
 };
 const DEFAULT_TITLE_SCORE = 80;
 
@@ -68,6 +69,7 @@ function buildSummary(
   let asistenciasTotales = 0;
   let titulosTotales = 0;
   let championsTotales = 0;
+  let mundialesTotales = 0;
   let partidosSeleccionTotales = 0;
   let premiosTotales = 0;
   let lesionesGravesTotales = 0;
@@ -78,6 +80,7 @@ function buildSummary(
     asistenciasTotales += season.asistencias;
     titulosTotales += season.titulos.length;
     championsTotales += season.titulos.filter((t) => t === "Champions").length;
+    mundialesTotales += season.titulos.filter((t) => t === "Mundial").length;
     partidosSeleccionTotales += season.partidosSeleccion;
     premiosTotales += season.premiosIndividuales.length;
     lesionesGravesTotales += season.lesiones.filter((l) => l.severidad === "grave").length;
@@ -95,6 +98,7 @@ function buildSummary(
     asistenciasTotales,
     titulosTotales,
     championsTotales,
+    mundialesTotales,
     partidosSeleccionTotales,
     premiosTotales,
     lesionesGravesTotales,

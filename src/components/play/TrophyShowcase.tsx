@@ -12,11 +12,13 @@ function collectTrophies(temporadas: SeasonStats[]): TrophyInstance[] {
   const trophies: TrophyInstance[] = [];
   for (const season of temporadas) {
     for (const titulo of season.titulos) {
-      const variant: TrophyVariant = titulo === "Liga" || titulo === "Copa" || titulo === "Champions" ? titulo : "Copa";
+      const variant: TrophyVariant =
+        titulo === "Liga" || titulo === "Copa" || titulo === "Champions" || titulo === "Mundial" ? titulo : "Copa";
       trophies.push({ label: titulo, variant, season: season.numeroTemporada, edad: season.edad });
     }
   }
-  return trophies;
+  // Proudest achievement first, regardless of when it happened.
+  return trophies.sort((a, b) => (a.variant === "Mundial" ? -1 : b.variant === "Mundial" ? 1 : 0));
 }
 
 export function TrophyShowcase({ temporadas }: { temporadas: SeasonStats[] }) {
@@ -32,7 +34,11 @@ export function TrophyShowcase({ temporadas }: { temporadas: SeasonStats[] }) {
         {trophies.map((trophy, i) => (
           <div
             key={i}
-            className="flex flex-none flex-col items-center gap-1.5 rounded-xl border border-zinc-800 bg-zinc-950/50 px-4 py-3"
+            className={`flex flex-none flex-col items-center gap-1.5 rounded-xl border px-4 py-3 ${
+              trophy.variant === "Mundial"
+                ? "border-amber-600 bg-amber-950/30 shadow-[0_0_20px_-8px_rgba(251,191,36,0.6)]"
+                : "border-zinc-800 bg-zinc-950/50"
+            }`}
           >
             <TrophyIcon variant={trophy.variant} size={36} />
             <span className="text-xs font-medium whitespace-nowrap text-zinc-200">{trophy.label}</span>

@@ -1,12 +1,13 @@
-export type TrophyVariant = "Liga" | "Copa" | "Champions" | "premio";
+export type TrophyVariant = "Liga" | "Copa" | "Champions" | "Mundial" | "premio";
 
 const CUP_COLORS: Record<Exclude<TrophyVariant, "premio">, { cup: string; accent: string }> = {
   Liga: { cup: "#38bdf8", accent: "#0369a1" },
   Copa: { cup: "#a78bfa", accent: "#6d28d9" },
   Champions: { cup: "#fbbf24", accent: "#b45309" },
+  Mundial: { cup: "#fbbf24", accent: "#b45309" },
 };
 
-function TrophyCup({ cup, accent, starred }: { cup: string; accent: string; starred?: boolean }) {
+function TrophyCup({ cup, accent, starred, globe }: { cup: string; accent: string; starred?: boolean; globe?: boolean }) {
   return (
     <svg viewBox="0 0 32 32" width="100%" height="100%" role="presentation">
       <path d="M6 8 C1.5 8 1.5 17 8.5 18" stroke={accent} strokeWidth="2" fill="none" strokeLinecap="round" />
@@ -20,6 +21,13 @@ function TrophyCup({ cup, accent, starred }: { cup: string; accent: string; star
           d="M16 7.2 L17.1 9.6 19.7 9.9 17.8 11.7 18.3 14.3 16 13 13.7 14.3 14.2 11.7 12.3 9.9 14.9 9.6 Z"
           fill="white"
         />
+      )}
+      {globe && (
+        <g>
+          <circle cx="16" cy="4" r="4.2" fill="#34d399" stroke="#065f46" strokeWidth="0.9" />
+          <ellipse cx="16" cy="4" rx="1.7" ry="4.2" fill="none" stroke="#065f46" strokeWidth="0.6" />
+          <line x1="11.8" y1="4" x2="20.2" y2="4" stroke="#065f46" strokeWidth="0.6" />
+        </g>
       )}
     </svg>
   );
@@ -50,7 +58,7 @@ export function TrophyIcon({ variant, size = 28, className }: TrophyIconProps) {
       {variant === "premio" ? (
         <AwardMedal />
       ) : (
-        <TrophyCup {...CUP_COLORS[variant]} starred={variant === "Champions"} />
+        <TrophyCup {...CUP_COLORS[variant]} starred={variant === "Champions"} globe={variant === "Mundial"} />
       )}
     </div>
   );
